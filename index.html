@@ -1,0 +1,2946 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080d17">
+<title>Meu Estudo | Concursos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+
+:root {
+    --bg: #03060c;
+    --side: #050a13;
+    --panel: #0a1220;
+    --panel2: #0e1a2d;
+    --line: #192b43;
+    --blue: #123f78;
+    --blue2: #3478c8;
+    --text: #edf4ff;
+    --muted: #8496ad;
+    --green: #22c55e;
+    --red: #ef4444;
+    --yellow: #f5b942;
+    --radius: 13px;
+    --shadow: 0 10px 30px rgba(0,0,0,.22);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    min-height: 100%;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: #23466f #050a13;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Inter, Arial, sans-serif;
+    font-size: 14px;
+    overflow-x: hidden;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* ESTRUTURA */
+
+.layout {
+    min-height: 100vh;
+}
+
+.sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: 250px;
+    height: 100dvh;
+    background: linear-gradient(180deg, #080f1c 0%, #040811 100%);
+    border-right: 1px solid #17283e;
+    padding: 25px 15px 16px;
+    display: flex;
+    flex-direction: column;
+    z-index: 50;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: #23466f transparent;
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 5px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: #23466f;
+    border-radius: 10px;
+}
+
+.brand {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    padding: 5px 11px 22px;
+    white-space: nowrap;
+}
+
+.brand span {
+    color: #3478c8;
+}
+
+.brand small {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 2.3px;
+    color: #7288a5;
+    font-weight: 600;
+    margin-top: 7px;
+}
+
+.nav {
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-label {
+    font-size: 9px;
+    letter-spacing: 1.8px;
+    color: #536985;
+    margin: 25px 11px 10px;
+    font-weight: 800;
+}
+
+.nav button {
+    width: 100%;
+    border: 1px solid transparent;
+    background: transparent;
+    color: #91a2b9;
+    text-align: left;
+    padding: 12px 13px;
+    border-radius: 9px;
+    margin: 3px 0;
+    font-size: 12px;
+    font-weight: 500;
+    transition: .2s ease;
+}
+
+.nav button:hover {
+    background: #101e32;
+    color: #dceaff;
+    border-color: #1b3555;
+    transform: translateX(2px);
+}
+
+.nav button.active {
+    background: linear-gradient(100deg, #102b4c, #10213a);
+    color: #79b7ff;
+    border-color: #204d7d;
+    box-shadow: inset 3px 0 #3478c8;
+}
+
+.nav button b {
+    display: inline-block;
+    width: 27px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.side-bottom {
+    margin-top: 25px;
+    padding: 15px 10px 3px;
+    border-top: 1px solid #17283e;
+    flex-shrink: 0;
+}
+
+/* ÁREA PRINCIPAL */
+
+.main {
+    margin-left: 250px;
+    padding: 30px 34px;
+    max-width: 1800px;
+    min-height: 100vh;
+}
+
+.top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 27px;
+    padding-bottom: 21px;
+    border-bottom: 1px solid #142237;
+}
+
+.top h1 {
+    font-size: 25px;
+    font-weight: 800;
+    letter-spacing: -.8px;
+    margin: 0 0 7px;
+}
+
+.muted {
+    color: var(--muted);
+}
+
+.small {
+    font-size: 11px;
+}
+
+.top-actions {
+    display: flex;
+    gap: 9px;
+    align-items: center;
+}
+
+/* CAMPOS */
+
+.select,
+.field,
+input,
+textarea,
+select {
+    background: #080f1c;
+    color: var(--text);
+    border: 1px solid #20344e;
+    border-radius: 9px;
+    padding: 11px 12px;
+    outline: none;
+    width: 100%;
+    transition: border .2s, box-shadow .2s;
+}
+
+.select {
+    width: auto;
+    min-width: 210px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: #3478c8;
+    box-shadow: 0 0 0 3px rgba(52,120,200,.13);
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: #60738c;
+}
+
+input[type="checkbox"] {
+    accent-color: #3478c8;
+}
+
+input[type="color"] {
+    min-height: 43px;
+    padding: 4px;
+}
+
+textarea {
+    resize: vertical;
+}
+
+/* BOTÕES */
+
+.btn {
+    border: 1px solid #2865a8;
+    border-radius: 9px;
+    padding: 11px 16px;
+    background: linear-gradient(135deg, #174d88, #123762);
+    color: #fff;
+    font-weight: 700;
+    font-size: 11px;
+    transition: .2s ease;
+}
+
+.btn:hover {
+    filter: brightness(1.2);
+    transform: translateY(-1px);
+    box-shadow: 0 5px 16px rgba(30,100,180,.2);
+}
+
+.btn.secondary {
+    background: #111e30;
+    color: #c5d8f0;
+    border-color: #253c59;
+}
+
+.btn.danger {
+    background: #351923;
+    color: #ffb7c0;
+    border-color: #633044;
+}
+
+.btn.ghost {
+    background: transparent;
+    border-color: #29415f;
+    color: #9bb4d2;
+}
+
+/* GRIDS E CARDS */
+
+.grid {
+    display: grid;
+    gap: 15px;
+}
+
+.stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-bottom: 15px;
+}
+
+.card {
+    background: linear-gradient(145deg, #0c1728, #09111e);
+    border: 1px solid #1b304b;
+    border-radius: var(--radius);
+    padding: 19px;
+    min-width: 0;
+    box-shadow: var(--shadow);
+    transition: border-color .2s, transform .2s;
+}
+
+.card:hover {
+    border-color: #29476a;
+}
+
+.metric-label {
+    font-size: 10px;
+    color: #8da1ba;
+    font-weight: 600;
+    letter-spacing: .4px;
+}
+
+.metric {
+    font-size: 27px;
+    font-weight: 800;
+    letter-spacing: -.8px;
+    margin: 11px 0 6px;
+}
+
+.metric-note {
+    font-size: 10px;
+    color: #71859f;
+}
+
+.blue {
+    color: #65aaff;
+}
+
+.green {
+    color: var(--green);
+}
+
+.red {
+    color: var(--red);
+}
+
+.yellow {
+    color: var(--yellow);
+}
+
+.daily {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    margin-bottom: 15px;
+}
+
+.ring {
+    width: 98px;
+    height: 98px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: conic-gradient(#3478c8 var(--p,0%), #1c304a 0);
+    flex-shrink: 0;
+    position: relative;
+    box-shadow: 0 0 20px rgba(52,120,200,.12);
+}
+
+.ring:before {
+    content: "";
+    position: absolute;
+    inset: 9px;
+    background: #0c1728;
+    border-radius: 50%;
+}
+
+.ring strong {
+    z-index: 1;
+    font-size: 20px;
+}
+
+.progress {
+    height: 7px;
+    background: #1c304a;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-top: 11px;
+}
+
+.progress span {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, #174d88, #65aaff);
+    border-radius: 20px;
+    width: 0;
+    transition: width .4s ease;
+}
+
+.cols {
+    grid-template-columns: 1.2fr 1fr;
+}
+
+.section-title {
+    font-size: 13px;
+    font-weight: 800;
+    margin: 0 0 17px;
+    color: #dceaff;
+}
+
+.empty {
+    text-align: center;
+    color: #7489a3;
+    padding: 28px 10px;
+    font-size: 11px;
+    line-height: 1.8;
+}
+
+/* TABELAS */
+
+.table-wrap {
+    overflow-x: auto;
+    width: 100%;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+}
+
+th,
+td {
+    text-align: left;
+    padding: 13px 9px;
+    border-bottom: 1px solid #1c3048;
+    white-space: nowrap;
+}
+
+th {
+    color: #8298b4;
+    font-weight: 700;
+    background: #0b1626;
+}
+
+td {
+    color: #d1dced;
+}
+
+tbody tr:hover {
+    background: #101e31;
+}
+
+/* ETIQUETAS */
+
+.tag {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 20px;
+    background: #142e4d;
+    color: #91c3ff;
+    font-size: 9px;
+    font-weight: 700;
+    border: 1px solid #24476e;
+}
+
+.tag.done {
+    background: #103426;
+    color: #86efac;
+    border-color: #20563c;
+}
+
+.tag.pending {
+    background: #3b2b13;
+    color: #fcd58a;
+    border-color: #664a20;
+}
+
+/* ORGANIZAÇÃO */
+
+.row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 13px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+}
+
+.form-group label {
+    font-size: 10px;
+    color: #9aadc4;
+    font-weight: 600;
+}
+
+.form-group.full {
+    grid-column: 1 / -1;
+}
+
+.actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.list {
+    display: grid;
+    gap: 10px;
+}
+
+.item {
+    padding: 14px;
+    background: #0a1422;
+    border: 1px solid #1d3049;
+    border-radius: 10px;
+    transition: .2s ease;
+}
+
+.item:hover {
+    border-color: #31577e;
+    background: #0d1a2c;
+}
+
+.item h4 {
+    margin: 0 0 6px;
+    font-size: 12px;
+    color: #e1edfc;
+}
+
+.item p {
+    margin: 0;
+    color: #8da1ba;
+    font-size: 10px;
+    line-height: 1.7;
+}
+
+.item .row {
+    margin-top: 10px;
+}
+
+/* MODAIS */
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.82);
+    backdrop-filter: blur(7px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+    z-index: 100;
+}
+
+.modal.open {
+    display: flex;
+}
+
+.modal-box {
+    width: min(620px, 100%);
+    max-height: 90vh;
+    overflow-y: auto;
+    background: linear-gradient(145deg, #101c2e, #080f1c);
+    border: 1px solid #294464;
+    border-radius: 15px;
+    padding: 23px;
+    box-shadow: 0 25px 80px rgba(0,0,0,.55);
+}
+
+.modal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 21px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #20344c;
+}
+
+.modal-head h2 {
+    font-size: 17px;
+    margin: 0;
+}
+
+.close {
+    background: none;
+    border: 0;
+    color: #93a8c1;
+    font-size: 25px;
+    transition: .2s;
+}
+
+.close:hover {
+    color: white;
+}
+
+/* PÁGINAS */
+
+.page {
+    display: none;
+}
+
+.page.active {
+    display: block;
+}
+
+/* CRONÔMETRO */
+
+.timer {
+    text-align: center;
+    padding: 35px 20px;
+}
+
+.timer-display {
+    font-size: 52px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    margin: 25px 0;
+    color: #78b7ff;
+    text-shadow: 0 0 25px rgba(52,120,200,.15);
+    font-variant-numeric: tabular-nums;
+}
+
+.timer select {
+    max-width: 320px;
+}
+
+/* GRÁFICOS */
+
+.chart-box {
+    height: 280px;
+    position: relative;
+    width: 100%;
+}
+
+.notice {
+    background: #10233a;
+    border: 1px solid #24476d;
+    color: #b9d8fa;
+    padding: 14px;
+    border-radius: 10px;
+    font-size: 11px;
+    line-height: 1.7;
+    margin-bottom: 15px;
+}
+
+/* RODAPÉ */
+
+.footer {
+    text-align: center;
+    color: #536984;
+    font-size: 9px;
+    letter-spacing: 1px;
+    padding: 35px 0 15px;
+}
+
+.mobile-menu {
+    display: none;
+}
+
+/* TABLETS */
+
+@media (max-width: 1100px) {
+    .sidebar {
+        width: 220px;
+    }
+
+    .main {
+        margin-left: 220px;
+        padding: 25px 20px;
+    }
+
+    .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .cols {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* CELULARES */
+
+@media (max-width: 700px) {
+    .sidebar {
+        width: 65px;
+        padding: 17px 6px;
+    }
+
+    .brand {
+        font-size: 0;
+        text-align: center;
+        padding: 5px 0 20px;
+    }
+
+    .brand:after {
+        content: "ME";
+        font-size: 18px;
+        font-weight: 800;
+        color: #65aaff;
+    }
+
+    .brand small,
+    .nav-label,
+    .nav button span {
+        display: none;
+    }
+
+    .nav button {
+        padding: 13px 5px;
+        text-align: center;
+    }
+
+    .nav button b {
+        width: auto;
+        font-size: 18px;
+    }
+
+    .side-bottom {
+        font-size: 0;
+        text-align: center;
+    }
+
+    .main {
+        margin-left: 65px;
+        padding: 18px 11px;
+    }
+
+    .top {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 13px;
+        padding-bottom: 16px;
+    }
+
+    .top h1 {
+        font-size: 21px;
+    }
+
+    .top-actions {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .top-actions .select {
+        width: 100%;
+    }
+
+    .top-actions .btn {
+        width: 100%;
+    }
+
+    .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .card {
+        padding: 13px;
+        border-radius: 10px;
+    }
+
+    .metric {
+        font-size: 20px;
+    }
+
+    .metric-label {
+        font-size: 9px;
+    }
+
+    .daily {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-group.full {
+        grid-column: auto;
+    }
+
+    .timer-display {
+        font-size: 34px;
+    }
+
+    .timer {
+        padding: 25px 12px;
+    }
+
+    .chart-box {
+        height: 230px;
+    }
+
+    .modal-box {
+        padding: 17px;
+    }
+
+    .between {
+        flex-wrap: wrap;
+    }
+
+    .actions .btn {
+        flex: 1;
+    }
+}
+
+/* TELAS MUITO PEQUENAS */
+
+@media (max-width: 380px) {
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    .main {
+        padding: 15px 9px;
+    }
+
+    .metric {
+        font-size: 23px;
+    }
+}
+
+/* ACESSIBILIDADE */
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 2px solid #65aaff;
+    outline-offset: 3px;
+}
+
+::selection {
+    background: #245b94;
+    color: white;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+    }
+}
+
+/* =========================================
+   CAMPOS E CAIXAS DE TEXTO — SARAH OLIVEIRA
+========================================= */
+
+input:not([type="checkbox"]):not([type="color"]):not([type="file"]),
+select,
+textarea {
+    background: linear-gradient(145deg, #0b1524, #080f1b);
+    color: #edf4ff;
+    border: 1px solid #263d5a;
+    border-radius: 11px;
+    padding: 13px 14px;
+    min-height: 44px;
+    font-size: 12px;
+    transition: border-color .25s, box-shadow .25s, background .25s;
+}
+
+textarea {
+    min-height: 100px;
+    line-height: 1.7;
+    resize: vertical;
+}
+
+input:hover,
+select:hover,
+textarea:hover {
+    border-color: #3478c8;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    background: #0d1a2c;
+    border-color: #438de0;
+    box-shadow: 0 0 0 3px rgba(52, 120, 200, .16);
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: #71849e;
+}
+
+.form-group label {
+    font-size: 11px;
+    color: #b5c7dd;
+    font-weight: 600;
+    letter-spacing: .2px;
+}
+
+.form-group {
+    gap: 9px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+}
+
+/* =========================================
+   NOTIFICAÇÕES PERSONALIZADAS
+========================================= */
+
+.toast-container {
+    position: fixed;
+    top: 22px;
+    right: 22px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: min(360px, calc(100vw - 30px));
+    pointer-events: none;
+}
+
+.toast {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 17px;
+    background: linear-gradient(145deg, #101f33, #081321);
+    border: 1px solid #24476d;
+    border-left: 4px solid #3478c8;
+    border-radius: 12px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, .45);
+    color: #edf4ff;
+    animation: toastIn .35s ease forwards;
+    pointer-events: auto;
+}
+
+.toast.success {
+    border-left-color: #22c55e;
+}
+
+.toast.error {
+    border-left-color: #ef4444;
+}
+
+.toast.warning {
+    border-left-color: #f5b942;
+}
+
+.toast-icon {
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    border-radius: 9px;
+    background: #173252;
+    color: #78b7ff;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.toast.success .toast-icon {
+    background: #103426;
+    color: #4ade80;
+}
+
+.toast.error .toast-icon {
+    background: #351923;
+    color: #ff8998;
+}
+
+.toast.warning .toast-icon {
+    background: #3b2b13;
+    color: #fcd58a;
+}
+
+.toast-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.toast-title {
+    display: block;
+    font-size: 12px;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.toast-message {
+    display: block;
+    color: #9aadc4;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.toast-close {
+    border: 0;
+    background: transparent;
+    color: #8298b4;
+    font-size: 19px;
+    cursor: pointer;
+}
+
+.toast-close:hover {
+    color: white;
+}
+
+.toast.removing {
+    animation: toastOut .25s ease forwards;
+}
+
+@keyframes toastIn {
+    from {
+        opacity: 0;
+        transform: translateX(25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes toastOut {
+    to {
+        opacity: 0;
+        transform: translateX(25px);
+    }
+}
+
+@media (max-width: 700px) {
+    .toast-container {
+        top: 12px;
+        right: 10px;
+        width: calc(100vw - 85px);
+    }
+}
+
+</style>
+</head>
+<body>
+
+<div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand">S7<span>ESTUDOS</span><small>GESTÃO DE ESTUDOS</small></div>
+  <div class="nav">
+    <div class="nav-label">ESTUDO</div>
+    <button class="active" data-page="dashboard"><b>▦</b><span>Painel</span></button>
+    <button data-page="concursos"><b>▣</b><span>Concursos</span></button>
+    <button data-page="disciplinas"><b>▤</b><span>Disciplinas e edital</span></button>
+    <button data-page="planejamento"><b>▦</b><span>Planejamento</span></button>
+    <button data-page="cronometro"><b>◷</b><span>Cronômetro</span></button>
+    <button data-page="revisoes"><b>↻</b><span>Revisões</span></button>
+    <div class="nav-label">DESEMPENHO</div>
+    <button data-page="questoes"><b>▧</b><span>Questões</span></button>
+    <button data-page="estatisticas"><b>▥</b><span>Estatísticas</span></button>
+    <button data-page="historico"><b>◴</b><span>Histórico</span></button>
+    <div class="nav-label">SISTEMA</div>
+    <button data-page="config"><b>⚙</b><span>Configurações e backup</span></button>
+  </div>
+  <div class="side-bottom small muted">@s7systems</div>
+</aside>
+<main class="main">
+<header class="top">
+ <div><h1 id="pageTitle">Sarah Oliveira</h1><div class="muted small" id="pageSubtitle">Acompanhe sua preparação para concursos públicos.</div></div>
+ <div class="top-actions"><select id="activeContest" class="select" aria-label="Concurso ativo"></select><button class="btn" onclick="openModal('studyModal')">+ Registrar estudo</button></div>
+</header>
+
+<section class="page active" id="page-dashboard">
+ <div class="grid stats">
+  <div class="card"><div class="metric-label">Tempo de estudo</div><div class="metric" id="mTime">0h00min</div><div class="metric-note">Tempo registrado</div></div>
+  <div class="card"><div class="metric-label">Desempenho</div><div class="metric blue" id="mAccuracy">0%</div><div class="metric-note" id="mAnswers">0 questões respondidas</div></div>
+  <div class="card"><div class="metric-label">Progresso no edital</div><div class="metric" id="mSyllabus">0%</div><div class="metric-note" id="mTopics">0 de 0 tópicos concluídos</div></div>
+  <div class="card"><div class="metric-label">Dias até a prova</div><div class="metric" id="mDays">—</div><div class="metric-note" id="mExamDate">Cadastre a data da prova</div></div>
+ </div>
+ <div class="card daily">
+  <div class="ring" id="dailyRing"><strong id="dailyPercent">0%</strong></div>
+  <div style="flex:1;min-width:0"><div class="metric-label">META DE HOJE</div><div class="metric" id="dailyTime">0h00min</div><div class="small muted" id="dailyCaption">Defina sua meta diária nas configurações.</div><div class="progress"><span id="dailyBar"></span></div></div>
+ </div>
+ <div class="grid cols">
+  <div class="card"><h3 class="section-title">Desempenho por disciplina</h3><div class="table-wrap"><table><thead><tr><th>Disciplina</th><th>Tempo</th><th>Acertos</th><th>Erros</th><th>%</th></tr></thead><tbody id="subjectStats"></tbody></table></div><div class="empty" id="subjectEmpty">Cadastre disciplinas e registre seus estudos para visualizar seus resultados.</div></div>
+  <div class="grid">
+   <div class="card"><h3 class="section-title">Metas semanais</h3><div class="between small"><span class="muted">Horas estudadas</span><strong id="weekHours">0h / 0h</strong></div><div class="progress"><span id="weekHoursBar"></span></div><div class="between small" style="margin-top:15px"><span class="muted">Questões resolvidas</span><strong id="weekQuestions">0 / 0</strong></div><div class="progress"><span id="weekQuestionsBar"></span></div></div>
+   <div class="card"><h3 class="section-title">Próximas revisões</h3><div id="nextReviews" class="list"></div></div>
+  </div>
+ </div>
+ <div class="card" style="margin-top:14px"><h3 class="section-title">Estudo da semana</h3><div class="chart-box"><canvas id="weekChart"></canvas></div></div>
+</section>
+
+<section class="page" id="page-concursos">
+ <div class="between" style="margin-bottom:14px"><div class="muted small">Cadastre e acompanhe diferentes concursos.</div><button class="btn" onclick="openModal('contestModal')">+ Novo concurso</button></div>
+ <div id="contestList" class="grid"></div>
+</section>
+
+<section class="page" id="page-disciplinas">
+ <div class="between" style="margin-bottom:14px"><div class="muted small">Organize as matérias e os tópicos do edital do concurso selecionado.</div><button class="btn" onclick="openModal('subjectModal')">+ Nova disciplina</button></div>
+ <div id="subjectList" class="grid"></div>
+</section>
+
+<section class="page" id="page-planejamento">
+ <div class="between" style="margin-bottom:14px"><div class="muted small">Organize tarefas e horários da sua preparação.</div><button class="btn" onclick="openModal('taskModal')">+ Adicionar tarefa</button></div>
+ <div id="taskList" class="grid"></div>
+</section>
+
+<section class="page" id="page-cronometro">
+ <div class="card timer">
+  <div class="metric-label">SESSÃO DE ESTUDO</div>
+  <select id="timerSubject" class="select" style="margin-top:15px"></select>
+  <div class="timer-display" id="timerDisplay">00:00:00</div>
+  <div class="actions" style="justify-content:center"><button class="btn" id="timerStart" onclick="startTimer()">Iniciar</button><button class="btn secondary" onclick="pauseTimer()">Pausar</button><button class="btn danger" onclick="finishTimer()">Finalizar e salvar</button></div>
+  <p class="muted small" style="margin-top:18px">O tempo será registrado no histórico ao finalizar a sessão.</p>
+ </div>
+</section>
+
+<section class="page" id="page-revisoes">
+ <div class="between" style="margin-bottom:14px"><div class="muted small">Acompanhe suas revisões pendentes e concluídas.</div><button class="btn" onclick="openModal('reviewModal')">+ Nova revisão</button></div>
+ <div id="reviewList" class="grid"></div>
+</section>
+
+<section class="page" id="page-questoes">
+ <div class="between" style="margin-bottom:14px"><div class="muted small">Registre questões e acompanhe seu percentual de acertos.</div><button class="btn" onclick="openModal('questionModal')">+ Registrar questões</button></div>
+ <div class="grid stats" id="questionMetrics"></div>
+ <div class="card"><h3 class="section-title">Registros de questões</h3><div id="questionList" class="list"></div></div>
+</section>
+
+<section class="page" id="page-estatisticas">
+ <div class="grid stats" id="statsMetrics"></div>
+ <div class="grid cols"><div class="card"><h3 class="section-title">Acertos por disciplina</h3><div class="chart-box"><canvas id="subjectChart"></canvas></div></div><div class="card"><h3 class="section-title">Distribuição de questões</h3><div class="chart-box"><canvas id="accuracyChart"></canvas></div></div></div>
+</section>
+
+<section class="page" id="page-historico">
+ <div class="card"><div class="between"><h3 class="section-title">Histórico de atividades</h3><span class="muted small" id="historyCount">0 registros</span></div><div id="historyList" class="list"></div></div>
+</section>
+
+<section class="page" id="page-config">
+ <div class="grid cols">
+  <div class="card"><h3 class="section-title">Metas de estudo</h3><form id="settingsForm" class="form-grid"><div class="form-group"><label>Meta diária (minutos)</label><input type="number" id="dailyGoal" min="1" value="180" required></div><div class="form-group"><label>Meta semanal (horas)</label><input type="number" id="weeklyGoal" min="1" value="18" required></div><div class="form-group"><label>Meta semanal de questões</label><input type="number" id="weeklyQuestionGoal" min="1" value="300" required></div><div class="form-group full"><button class="btn">Salvar metas</button></div></form></div>
+  <div class="card"><h3 class="section-title">Backup dos seus dados</h3><p class="small muted" style="line-height:1.7;margin-bottom:15px">Exporte um arquivo de segurança ou importe um backup anterior. Os dados ficam salvos neste navegador e neste dispositivo.</p><div class="actions"><button class="btn" onclick="exportBackup()">Exportar backup</button><label class="btn secondary">Importar backup<input type="file" accept="application/json" onchange="importBackup(event)" hidden></label></div><button class="btn danger" style="margin-top:20px" onclick="clearData()">Apagar todos os dados</button></div>
+ </div>
+ <div class="notice" style="margin-top:14px">Atenção: o LocalStorage não sincroniza automaticamente entre computadores ou navegadores. Faça backups frequentes. O sistema não envia seus dados para um servidor.</div>
+</section>
+
+<footer class="footer">Desenvolvido por s7systems</footer>
+</main>
+</div>
+
+<!-- MODAIS -->
+<div class="modal" id="contestModal"><div class="modal-box"><div class="modal-head"><h2>Novo concurso</h2><button class="close" onclick="closeModal('contestModal')">×</button></div><form id="contestForm" class="form-grid"><div class="form-group full"><label>Nome do concurso *</label><input name="name" required placeholder="Ex.: Agente Administrativo — Prefeitura"></div><div class="form-group"><label>Instituição</label><input name="institution" placeholder="Prefeitura, órgão..."></div><div class="form-group"><label>Banca</label><input name="board" placeholder="Ex.: Instituto Verbena"></div><div class="form-group"><label>Data da prova</label><input name="examDate" type="date"></div><div class="form-group"><label>Link do edital</label><input name="link" type="url" placeholder="https://..."></div><div class="form-group full"><label>Observações</label><textarea name="notes" rows="2"></textarea></div><div class="form-group full"><button class="btn">Salvar concurso</button></div></form></div></div>
+
+<div class="modal" id="subjectModal"><div class="modal-box"><div class="modal-head"><h2>Nova disciplina</h2><button class="close" onclick="closeModal('subjectModal')">×</button></div><form id="subjectForm" class="form-grid"><div class="form-group full"><label>Nome da disciplina *</label><input name="name" required placeholder="Ex.: Direito Administrativo"></div><div class="form-group full"><label>Cor de identificação</label><input name="color" type="color" value="#3b82f6"></div><div class="form-group full"><label>Tópicos do edital (um por linha)</label><textarea name="topics" rows="5" placeholder="Princípios da administração pública&#10;Atos administrativos&#10;Poderes administrativos"></textarea></div><div class="form-group full"><button class="btn">Salvar disciplina</button></div></form></div></div>
+
+<div class="modal" id="studyModal"><div class="modal-box"><div class="modal-head"><h2>Registrar estudo</h2><button class="close" onclick="closeModal('studyModal')">×</button></div><form id="studyForm" class="form-grid"><div class="form-group full"><label>Disciplina *</label><select name="subjectId" id="studySubject" required></select></div><div class="form-group"><label>Data *</label><input type="date" name="date" required></div><div class="form-group"><label>Duração (minutos) *</label><input type="number" name="minutes" min="1" required placeholder="Ex.: 60"></div><div class="form-group full"><label>O que estudou?</label><input name="topic" placeholder="Ex.: Atos administrativos"></div><div class="form-group full"><label>Observações</label><textarea name="notes" rows="2"></textarea></div><div class="form-group full"><button class="btn">Salvar estudo</button></div></form></div></div>
+
+<div class="modal" id="questionModal"><div class="modal-box"><div class="modal-head"><h2>Registrar questões</h2><button class="close" onclick="closeModal('questionModal')">×</button></div><form id="questionForm" class="form-grid"><div class="form-group full"><label>Disciplina *</label><select name="subjectId" id="questionSubject" required></select></div><div class="form-group"><label>Data *</label><input type="date" name="date" required></div><div class="form-group"><label>Fonte / banca</label><input name="source" placeholder="Ex.: Cebraspe"></div><div class="form-group"><label>Total de questões *</label><input type="number" name="total" min="1" required></div><div class="form-group"><label>Acertos *</label><input type="number" name="correct" min="0" required></div><div class="form-group full"><label>Observações</label><input name="notes"></div><div class="form-group full"><button class="btn">Salvar questões</button></div></form></div></div>
+
+<div class="modal" id="reviewModal"><div class="modal-box"><div class="modal-head"><h2>Nova revisão</h2><button class="close" onclick="closeModal('reviewModal')">×</button></div><form id="reviewForm" class="form-grid"><div class="form-group full"><label>Disciplina *</label><select name="subjectId" id="reviewSubject" required></select></div><div class="form-group full"><label>Conteúdo *</label><input name="topic" required placeholder="Conteúdo que será revisado"></div><div class="form-group"><label>Data da revisão *</label><input type="date" name="date" required></div><div class="form-group"><label>Tipo</label><select name="type"><option>Revisão 24h</option><option>Revisão 7 dias</option><option>Revisão 30 dias</option><option>Revisão personalizada</option></select></div><div class="form-group full"><button class="btn">Agendar revisão</button></div></form></div></div>
+
+<div class="modal" id="taskModal"><div class="modal-box"><div class="modal-head"><h2>Adicionar tarefa</h2><button class="close" onclick="closeModal('taskModal')">×</button></div><form id="taskForm" class="form-grid"><div class="form-group full"><label>Tarefa *</label><input name="title" required placeholder="Ex.: Estudar Português — concordância"></div><div class="form-group"><label>Data *</label><input type="date" name="date" required></div><div class="form-group"><label>Horário</label><input type="time" name="time"></div><div class="form-group full"><label>Disciplina</label><select name="subjectId" id="taskSubject"></select></div><div class="form-group full"><button class="btn">Salvar tarefa</button></div></form></div></div>
+
+<script>
+
+"use strict";
+
+/* =========================================================
+   SARAH OLIVEIRA — SISTEMA PESSOAL DE ESTUDOS
+   Mantém os dados no navegador usando LocalStorage.
+   ========================================================= */
+
+const KEY = "meu_estudo_v1";
+
+const today = () => {
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+};
+
+const uid = () =>
+    Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+
+const blank = () => ({
+    contests: [],
+    activeContest: "",
+    subjects: [],
+    studies: [],
+    questions: [],
+    reviews: [],
+    tasks: [],
+    settings: {
+        dailyGoal: 180,
+        weeklyGoal: 18,
+        weeklyQuestionGoal: 300
+    }
+});
+
+let db = load();
+
+let timerInterval = null;
+let timerSeconds = 0;
+let timerRunning = false;
+let timerStartedAt = 0;
+
+let charts = {};
+
+
+/* =========================================
+   NOTIFICAÇÕES — SARAH OLIVEIRA
+========================================= */
+
+function showToast(message, type = "success", title = "") {
+    const container = document.getElementById("toastContainer");
+
+    if (!container) return;
+
+    const config = {
+        success: {
+            icon: "✓",
+            title: title || "Tudo certo!"
+        },
+        error: {
+            icon: "!",
+            title: title || "Atenção"
+        },
+        warning: {
+            icon: "⚠",
+            title: title || "Aviso"
+        }
+    };
+
+    const selected = config[type] || config.success;
+
+    const toast = document.createElement("div");
+    toast.className = `toast ${type}`;
+
+    const icon = document.createElement("div");
+    icon.className = "toast-icon";
+    icon.textContent = selected.icon;
+
+    const content = document.createElement("div");
+    content.className = "toast-content";
+
+    const heading = document.createElement("strong");
+    heading.className = "toast-title";
+    heading.textContent = selected.title;
+
+    const text = document.createElement("span");
+    text.className = "toast-message";
+    text.textContent = message;
+
+    const close = document.createElement("button");
+    close.className = "toast-close";
+    close.type = "button";
+    close.textContent = "×";
+    close.setAttribute("aria-label", "Fechar notificação");
+
+    content.append(heading, text);
+    toast.append(icon, content, close);
+    container.appendChild(toast);
+
+    let timeout;
+
+    function removeToast() {
+        clearTimeout(timeout);
+
+        if (!toast.isConnected) return;
+
+        toast.classList.add("removing");
+
+        setTimeout(() => toast.remove(), 250);
+    }
+
+    close.addEventListener("click", removeToast);
+
+    timeout = setTimeout(removeToast, 4000);
+}
+
+
+/* =========================================================
+   DADOS E ARMAZENAMENTO
+   ========================================================= */
+
+function load() {
+    try {
+        const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+
+        const data = {
+            ...blank(),
+            ...saved,
+            settings: {
+                ...blank().settings,
+                ...(saved.settings || {})
+            }
+        };
+
+        [
+            "contests",
+            "subjects",
+            "studies",
+            "questions",
+            "reviews",
+            "tasks"
+        ].forEach(key => {
+            if (!Array.isArray(data[key])) data[key] = [];
+        });
+
+        return data;
+    } catch (error) {
+        console.error("Erro ao carregar os dados:", error);
+        return blank();
+    }
+}
+
+
+function save(message = "Suas alterações foram salvas com sucesso!") {
+    try {
+        localStorage.setItem(KEY, JSON.stringify(db));
+
+        renderAll();
+
+        showToast(
+            message,
+            "success",
+            "Salvo com sucesso!"
+        );
+
+        return true;
+
+    } catch (error) {
+        console.error("Erro ao salvar:", error);
+
+        showToast(
+            "Não foi possível salvar. Verifique o armazenamento do navegador.",
+            "error",
+            "Erro ao salvar"
+        );
+
+        return false;
+    }
+}
+
+
+function activeContest() {
+    return db.contests.find(c => c.id === db.activeContest) || null;
+}
+
+function subjects() {
+    return db.subjects.filter(s => s.contestId === db.activeContest);
+}
+
+function subjectName(id) {
+    return db.subjects.find(s => s.id === id)?.name || "Disciplina removida";
+}
+
+function contestFilter(arr) {
+    return arr.filter(item => item.contestId === db.activeContest);
+}
+
+/* =========================================================
+   FORMATAÇÃO
+   ========================================================= */
+
+function fmtMinutes(value) {
+    const minutes = Math.max(0, Math.round(Number(value) || 0));
+    const hours = Math.floor(minutes / 60);
+    const rest = minutes % 60;
+
+    return `${hours}h${String(rest).padStart(2, "0")}min`;
+}
+
+function dateBR(value) {
+    if (!value) return "—";
+
+    const parts = value.split("-");
+    if (parts.length !== 3) return "—";
+
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+}
+
+function sum(arr, key) {
+    return arr.reduce(
+        (total, item) => total + (Number(item[key]) || 0),
+        0
+    );
+}
+
+function localDateObject(value) {
+    if (!value) return null;
+
+    const [year, month, day] = value.split("-").map(Number);
+
+    if (!year || !month || !day) return null;
+
+    return new Date(year, month - 1, day);
+}
+
+function weekStart() {
+    const date = new Date();
+    date.setHours(0, 0, 0, 0);
+
+    const day = date.getDay();
+    const difference = day === 0 ? 6 : day - 1;
+
+    date.setDate(date.getDate() - difference);
+
+    return todayFromDate(date);
+}
+
+function todayFromDate(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+
+    return `${y}-${m}-${d}`;
+}
+
+function inWeek(value) {
+    return value >= weekStart() && value <= today();
+}
+
+function escapeHtml(value = "") {
+    return String(value).replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[character]);
+}
+
+function safeUrl(value) {
+    try {
+        const url = new URL(value);
+
+        if (url.protocol === "http:" || url.protocol === "https:") {
+            return url.href;
+        }
+    } catch (error) {
+        return "";
+    }
+
+    return "";
+}
+
+/* =========================================================
+   NAVEGAÇÃO
+   ========================================================= */
+
+function nav(page) {
+    document.querySelectorAll(".page").forEach(section => {
+        section.classList.toggle(
+            "active",
+            section.id === `page-${page}`
+        );
+    });
+
+    document.querySelectorAll(".nav button").forEach(button => {
+        button.classList.toggle(
+            "active",
+            button.dataset.page === page
+        );
+    });
+
+    const labels = {
+        dashboard: [
+            "Sarah Oliveira",
+            "Acompanhe sua preparação e sua evolução."
+        ],
+        concursos: [
+            "Concursos",
+            "Gerencie suas provas e seus objetivos."
+        ],
+        disciplinas: [
+            "Disciplinas e edital",
+            "Organize matérias e acompanhe o conteúdo programático."
+        ],
+        planejamento: [
+            "Planejamento",
+            "Organize tarefas e compromissos da sua rotina."
+        ],
+        cronometro: [
+            "Cronômetro",
+            "Registre o tempo dedicado aos estudos."
+        ],
+        revisoes: [
+            "Revisões",
+            "Acompanhe seus conteúdos e revisões."
+        ],
+        questoes: [
+            "Questões",
+            "Meça seu aproveitamento nos estudos."
+        ],
+        estatisticas: [
+            "Estatísticas",
+            "Visualize seus resultados e sua evolução."
+        ],
+        historico: [
+            "Histórico",
+            "Consulte suas atividades registradas."
+        ],
+        config: [
+            "Configurações",
+            "Metas e segurança dos seus dados."
+        ]
+    };
+
+    const selected = labels[page] || labels.dashboard;
+
+    document.getElementById("pageTitle").textContent = selected[0];
+    document.getElementById("pageSubtitle").textContent = selected[1];
+
+    renderAll();
+}
+
+document.querySelectorAll(".nav button").forEach(button => {
+    button.addEventListener("click", () => {
+        nav(button.dataset.page);
+    });
+});
+
+/* =========================================================
+   MODAIS E FORMULÁRIOS
+   ========================================================= */
+
+function openModal(id) {
+    const needsContest = [
+        "subjectModal",
+        "studyModal",
+        "questionModal",
+        "reviewModal",
+        "taskModal"
+    ];
+
+    if (needsContest.includes(id) && !db.activeContest) {
+        alert("Cadastre ou selecione um concurso primeiro.");
+        nav("concursos");
+        return;
+    }
+
+    const modal = document.getElementById(id);
+
+    if (!modal) return;
+
+    modal.classList.add("open");
+    setFormDefaults();
+}
+
+function closeModal(id) {
+    document.getElementById(id)?.classList.remove("open");
+}
+
+function setFormDefaults() {
+    document.querySelectorAll('input[type="date"]').forEach(input => {
+        if (!input.value) input.value = today();
+    });
+
+    fillSelects();
+}
+
+function fillSelects() {
+    const options = subjects()
+        .map(subject =>
+            `<option value="${escapeHtml(subject.id)}">${escapeHtml(subject.name)}</option>`
+        )
+        .join("");
+
+    [
+        "timerSubject",
+        "studySubject",
+        "questionSubject",
+        "reviewSubject",
+        "taskSubject"
+    ].forEach(id => {
+        const element = document.getElementById(id);
+
+        if (!element) return;
+
+        const previous = element.value;
+
+        element.innerHTML = options ||
+            '<option value="">Cadastre uma disciplina</option>';
+
+        if ([...element.options].some(option => option.value === previous)) {
+            element.value = previous;
+        }
+    });
+}
+
+document.getElementById("activeContest").addEventListener("change", event => {
+    db.activeContest = event.target.value;
+    save("Seu tempo de estudo foi registrado!");
+});
+
+/* =========================================================
+   CADASTRO DE CONCURSOS
+   ========================================================= */
+
+document.getElementById("contestForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    const form = new FormData(event.target);
+    const name = String(form.get("name") || "").trim();
+
+    if (!name) {
+        alert("Informe o nome do concurso.");
+        return;
+    }
+
+    const contest = {
+        id: uid(),
+        name,
+        institution: String(form.get("institution") || "").trim(),
+        board: String(form.get("board") || "").trim(),
+        examDate: form.get("examDate") || "",
+        link: safeUrl(String(form.get("link") || "").trim()),
+        notes: String(form.get("notes") || "").trim(),
+        createdAt: today()
+    };
+
+    db.contests.push(contest);
+    db.activeContest = contest.id;
+
+    event.target.reset();
+    closeModal("contestModal");
+
+    save("Seu tempo de estudo foi registrado!");
+});
+
+function renderContest() {
+    const select = document.getElementById("activeContest");
+
+    select.innerHTML = db.contests.map(contest => `
+        <option value="${escapeHtml(contest.id)}">
+            ${escapeHtml(contest.name)}
+        </option>
+    `).join("") || '<option value="">Nenhum concurso cadastrado</option>';
+
+    if (!db.contests.some(contest => contest.id === db.activeContest)) {
+        db.activeContest = db.contests[0]?.id || "";
+    }
+
+    select.value = db.activeContest;
+
+    document.getElementById("contestList").innerHTML =
+        db.contests.map(contest => {
+            const selected = contest.id === db.activeContest;
+            const link = safeUrl(contest.link);
+
+            return `
+                <div class="card">
+                    <div class="between">
+                        <h3 class="section-title">${escapeHtml(contest.name)}</h3>
+                        <span class="tag ${selected ? "done" : ""}">
+                            ${selected ? "Selecionado" : "Cadastrado"}
+                        </span>
+                    </div>
+
+                    <p class="small muted">
+                        ${escapeHtml(contest.institution || "Instituição não informada")}
+                        ·
+                        ${escapeHtml(contest.board || "Banca não informada")}
+                    </p>
+
+                    <p class="small muted" style="margin:9px 0">
+                        Prova: ${dateBR(contest.examDate)}
+                    </p>
+
+                    <div class="actions">
+                        <button class="btn secondary"
+                            onclick="selectContest('${escapeHtml(contest.id)}')">
+                            Selecionar
+                        </button>
+
+                        <button class="btn danger"
+                            onclick="deleteContest('${escapeHtml(contest.id)}')">
+                            Excluir
+                        </button>
+
+                        ${link ? `
+                            <a class="btn ghost"
+                               href="${escapeHtml(link)}"
+                               target="_blank"
+                               rel="noopener noreferrer">
+                               Abrir edital
+                            </a>
+                        ` : ""}
+                    </div>
+                </div>
+            `;
+        }).join("") ||
+        '<div class="card empty">Nenhum concurso cadastrado. Clique em “Novo concurso” para começar.</div>';
+}
+
+function selectContest(id) {
+    if (!db.contests.some(contest => contest.id === id)) return;
+
+    db.activeContest = id;
+    save("Seu tempo de estudo foi registrado!");
+}
+
+function deleteContest(id) {
+    if (!confirm("Excluir este concurso e todos os dados relacionados?")) {
+        return;
+    }
+
+    db.contests = db.contests.filter(item => item.id !== id);
+
+    [
+        "subjects",
+        "studies",
+        "questions",
+        "reviews",
+        "tasks"
+    ].forEach(key => {
+        db[key] = db[key].filter(item => item.contestId !== id);
+    });
+
+    if (db.activeContest === id) {
+        db.activeContest = db.contests[0]?.id || "";
+    }
+
+    save("Seu tempo de estudo foi registrado!");
+}
+
+/* =========================================================
+   DISCIPLINAS E TÓPICOS DO EDITAL
+   ========================================================= */
+
+document.getElementById("subjectForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    const form = new FormData(event.target);
+    const name = String(form.get("name") || "").trim();
+
+    if (!name) {
+        alert("Informe o nome da disciplina.");
+        return;
+    }
+
+    const topics = String(form.get("topics") || "")
+        .split("\n")
+        .map(topic => topic.trim())
+        .filter(Boolean)
+        .map(topic => ({
+            id: uid(),
+            name: topic,
+            done: false
+        }));
+
+    db.subjects.push({
+        id: uid(),
+        contestId: db.activeContest,
+        name,
+        color: form.get("color") || "#3478c8",
+        topics
+    });
+
+    event.target.reset();
+    closeModal("subjectModal");
+
+    save("Seu tempo de estudo foi registrado!");
+});
+
+function renderSubjects() {
+    const list = document.getElementById("subjectList");
+
+    list.innerHTML = subjects().map(subject => {
+        const topics = Array.isArray(subject.topics)
+            ? subject.topics
+            : [];
+
+        const done = topics.filter(topic => topic.done).length;
+        const percentage = topics.length
+            ? Math.round(done / topics.length * 100)
+            : 0;
+
+        return `
+            <div class="card">
+                <div class="between">
+                    <h3 class="section-title">
+                        <span style="color:${escapeHtml(subject.color || "#3478c8")}">●</span>
+                        ${escapeHtml(subject.name)}
+                    </h3>
+
+                    <button class="btn danger"
+                        onclick="deleteSubject('${escapeHtml(subject.id)}')">
+                        Excluir
+                    </button>
+                </div>
+
+                <div class="small muted">
+                    ${done} de ${topics.length} tópicos concluídos
+                </div>
+
+                <div class="progress">
+                    <span style="width:${percentage}%"></span>
+                </div>
+
+                <div class="list" style="margin-top:12px">
+                    ${topics.map(topic => `
+                        <div class="between item">
+                            <label class="small">
+                                <input type="checkbox"
+                                    ${topic.done ? "checked" : ""}
+                                    onchange="toggleTopic('${escapeHtml(subject.id)}','${escapeHtml(topic.id)}')"
+                                    style="width:auto;margin-right:7px">
+
+                                <span style="${topic.done ? "text-decoration:line-through;color:#8292a8" : ""}">
+                                    ${escapeHtml(topic.name)}
+                                </span>
+                            </label>
+
+                            <button class="btn ghost"
+                                onclick="deleteTopic('${escapeHtml(subject.id)}','${escapeHtml(topic.id)}')">
+                                ×
+                            </button>
+                        </div>
+                    `).join("") || `
+                        <div class="empty">
+                            Nenhum tópico cadastrado nesta disciplina.
+                        </div>
+                    `}
+                </div>
+
+                <button class="btn secondary"
+                    style="margin-top:10px"
+                    onclick="addTopic('${escapeHtml(subject.id)}')">
+                    + Adicionar tópico
+                </button>
+            </div>
+        `;
+    }).join("") || `
+        <div class="card empty">
+            Cadastre um concurso e depois adicione as disciplinas do edital.
+        </div>
+    `;
+}
+
+function deleteSubject(id) {
+    if (!confirm("Excluir esta disciplina e seus tópicos?")) return;
+
+    db.subjects = db.subjects.filter(subject => subject.id !== id);
+
+    save("Seu tempo de estudo foi registrado!");
+}
+
+function toggleTopic(subjectId, topicId) {
+    const subject = db.subjects.find(item => item.id === subjectId);
+    const topic = subject?.topics.find(item => item.id === topicId);
+
+    if (!topic) return;
+
+    topic.done = !topic.done;
+    save("Seu tempo de estudo foi registrado!");
+}
+
+function deleteTopic(subjectId, topicId) {
+    const subject = db.subjects.find(item => item.id === subjectId);
+
+    if (!subject) return;
+
+    subject.topics = subject.topics.filter(topic => topic.id !== topicId);
+
+    save("Seu tempo de estudo foi registrado!");
+}
+
+function addTopic(subjectId) {
+    const name = prompt("Digite o nome do novo tópico:");
+
+    if (!name || !name.trim()) return;
+
+    const subject = db.subjects.find(item => item.id === subjectId);
+
+    if (!subject) return;
+
+    subject.topics.push({
+        id: uid(),
+        name: name.trim(),
+        done: false
+    });
+
+    save("Seu tempo de estudo foi registrado!");
+}
+
+/* =========================================================
+   REGISTRO DE ESTUDOS
+   ========================================================= */
+
+document.getElementById("studyForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    const form = new FormData(event.target);
+    const minutes = Number(form.get("minutes"));
+    const subjectId = form.get("subjectId");
+
+    if (!subjectId || !subjects().some(subject => subject.id === subjectId)) {
+        alert("Selecione uma disciplina válida.");
+        return;
+    }
+
+    if (!Number.isFinite(minutes) || minutes < 1) {
+        alert("Informe uma duração válida.");
+        return;
+    }
+
+    db.studies.push({
+        id: uid(),
+        contestId: db.activeContest,
+        subjectId,
+        date: form.get("date") || today(),
+        minutes,
+        topic: String(form.get("topic") || "").trim(),
+        notes: String(form.get("notes") || "").trim()
+    });
+
+    event.target.reset();
+    closeModal("studyModal");
+
+    save("Seu tempo de estudo foi registrado!");
+});
+
+/* =========================================================
+   QUESTÕES E DESEMPENHO
+   ========================================================= */
+
+document.getElementById("questionForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    const form = new FormData(event.target);
+
+    const total = Number(form.get("total"));
+    const correct = Number(form.get("correct"));
+    const subjectId = form.get("subjectId");
+
+    if (!subjectId || !subjects().some(subject => subject.id === subjectId)) {
+        alert("Selecione uma disciplina válida.");
+        return;
+    }
+
+    if (!Number.isInteger(total) || total < 1) {
+        alert("Informe um total de questões válido.");
+        return;
+    }
+
+    if (!Number.isInteger(correct) || correct < 0 || correct > total) {
+        alert("Os acertos devem estar entre zero e o total de questões.");
+        return;
+    }
+
+    db.questions.push({
+        id: uid(),
+        contestId: db.activeContest,
+        subjectId,
+        date: form.get("date") || today(),
+        source: String(form.get("source") || "").trim(),
+        total,
+        correct,
+        notes: String(form.get("notes") || "").trim()
+    });
+
+    event.target.reset();
+    closeModal("questionModal");
+
+    save("Seu tempo de estudo foi registrado!");
+});
+
+function renderQuestions() {
+    const records = contestFilter(db.questions)
+        .sort((a, b) => b.date.localeCompare(a.date));
+
+    const total = sum(records, "total");
+    const correct = sum(records, "correct");
+    const wrong = total - correct;
+    const accuracy = total ? Math.round(correct / total * 100) : 0;
+
+    document.getElementById("questionMetrics").innerHTML = [
+        ["Questões", total],
+        ["Acertos", correct],
+        ["Erros", wrong],
+        ["Aproveitamento", `${accuracy}%`]
+    ].map(item => `
+        <div class="card">
+            <div class="metric-label">${item[0]}</div>
+            <div class="metric">${item[1]}</div>
+        </div>
+    `).join("");
+
+    document.getElementById("questionList").innerHTML =
+        records.map(question => {
+            const percentage = question.total
+                ? Math.round(question.correct / question.total * 100)
+                : 0;
+
+            return `
+                <div class="item">
+                    <div class="between">
+                        <h4>${escapeHtml(subjectName(question.subjectId))}</h4>
+                        <span class="tag">${percentage}%</span>
+                    </div>
+
+                    <p>
+                        ${dateBR(question.date)}
+                        · ${escapeHtml(question.source || "Fonte não informada")}
+                        · ${question.correct} acertos
+                        / ${question.total - question.correct} erros
+                        em ${question.total} questões
+                    </p>
+
+                    <div class="actions">
+                        <button class="btn danger"
+                            onclick="deleteItem('questions','${escapeHtml(question.id)}')">
+                            Excluir
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join("") ||
+        '<div class="empty">Nenhum registro de questões.</div>';
+}
+
+/* =========================================================
+   REVISÕES
+   ========================================================= */
+
+document.getElementById("reviewForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    const form = new FormData(event.target);
+    const subjectId = form.get("subjectId");
+    const topic = String(form.get("topic") || "").trim();
+
+    if (!subjectId || !subjects().some(subject => subject.id === subjectId)) {
+        alert("Selecione uma disciplina válida.");
+        return;
+    }
+
+    if (!topic) {
+        alert("Informe o conteúdo que será revisado.");
+        return;
+    }
+
+    db.reviews.push({
+        id: uid(),
+        contestId: db.activeContest,
+        subjectId,
+        topic,
+        date: form.get("date") || today(),
+        type: form.get("type") || "Revisão personalizada",
+        done: false
+    });
+
+    event.target.reset();
+    closeModal("reviewModal");
+
+    save("Seu tempo de estudo foi registrado!");
+});
+
+function renderReviews() {
+    const records = contestFilter(db.reviews)
+        .sort((a, b) => a.date.localeCompare(b.date));
+
+    document.getElementById("reviewList").innerHTML =
+        records.map(review => {
+            const overdue = !review.done && review.date < today();
+
+            return `
+                <div class="item">
+                    <div class="between">
+                        <h4>${escapeHtml(review.topic)}</h4>
+
+                        <span class="tag ${
+                            review.done ? "done" : overdue ? "pending" : ""
+                        }">
+                            ${review.done ? "Concluída" : overdue ? "Atrasada" : "Agendada"}
+                        </span>
+                    </div>
+
+                    <p>
+                        ${escapeHtml(subjectName(review.subjectId))}
+                        · ${escapeHtml(review.type)}
+                        · ${dateBR(review.date)}
+                    </p>
+
+                    <div class="actions">
+                        <button class="btn secondary"
+                            onclick="toggleReview('${escapeHtml(review.id)}')">
+                            ${review.done ? "Reabrir" : "Marcar concluída"}
+                        </button>
+
+                        <button class="btn danger"
+                            onclick="deleteItem('reviews','${escapeHtml(review.id)}')">
+                            Excluir
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join("") ||
+        '<div class="card empty">Nenhuma revisão cadastrada.</div>';
+}
+
+function toggleReview(id) {
+    const review = db.reviews.find(item => item.id === id);
+
+    if (!review) return;
+
+    review.done = !review.done;
+    save("Seu tempo de estudo foi registrado!");
+}
+
+/* =========================================================
+   PLANEJAMENTO DE TAREFAS
+   ========================================================= */
+
+document.getElementById("taskForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    const form = new FormData(event.target);
+    const title = String(form.get("title") || "").trim();
+
+    if (!title) {
+        alert("Informe o nome da tarefa.");
+        return;
+    }
+
+    db.tasks.push({
+        id: uid(),
+        contestId: db.activeContest,
+        title,
+        date: form.get("date") || today(),
+        time: form.get("time") || "",
+        subjectId: form.get("subjectId") || "",
+        done: false
+    });
+
+    event.target.reset();
+    closeModal("taskModal");
+
+    save("Seu tempo de estudo foi registrado!");
+});
+
+function renderTasks() {
+    const records = contestFilter(db.tasks)
+        .sort((a, b) => {
+            return `${a.date}${a.time || ""}`.localeCompare(
+                `${b.date}${b.time || ""}`
+            );
+        });
+
+    document.getElementById("taskList").innerHTML =
+        records.map(task => `
+            <div class="item">
+                <div class="between">
+                    <h4>${escapeHtml(task.title)}</h4>
+
+                    <span class="tag ${task.done ? "done" : "pending"}">
+                        ${task.done ? "Concluída" : "Pendente"}
+                    </span>
+                </div>
+
+                <p>
+                    ${dateBR(task.date)}
+                    ${escapeHtml(task.time || "")}
+                    ·
+                    ${task.subjectId
+                        ? escapeHtml(subjectName(task.subjectId))
+                        : "Sem disciplina"}
+                </p>
+
+                <div class="actions">
+                    <button class="btn secondary"
+                        onclick="toggleTask('${escapeHtml(task.id)}')">
+                        ${task.done ? "Reabrir" : "Concluir"}
+                    </button>
+
+                    <button class="btn danger"
+                        onclick="deleteItem('tasks','${escapeHtml(task.id)}')">
+                        Excluir
+                    </button>
+                </div>
+            </div>
+        `).join("") ||
+        '<div class="card empty">Nenhuma tarefa planejada.</div>';
+}
+
+function toggleTask(id) {
+    const task = db.tasks.find(item => item.id === id);
+
+    if (!task) return;
+
+    task.done = !task.done;
+    save("Seu tempo de estudo foi registrado!");
+}
+
+/* =========================================================
+   EXCLUSÃO GENÉRICA
+   ========================================================= */
+
+function deleteItem(type, id) {
+    const allowed = ["studies", "questions", "reviews", "tasks"];
+
+    if (!allowed.includes(type)) return;
+
+    if (!confirm("Deseja realmente excluir este registro?")) return;
+
+    db[type] = db[type].filter(item => item.id !== id);
+
+    save("Seu tempo de estudo foi registrado!");
+}
+
+/* =========================================================
+   HISTÓRICO
+   ========================================================= */
+
+function renderHistory() {
+    const records = [
+        ...contestFilter(db.studies).map(item => ({
+            ...item,
+            type: "Estudo",
+            title: subjectName(item.subjectId),
+            detail: `${fmtMinutes(item.minutes)} · ${item.topic || "Sem tópico"}`
+        })),
+
+        ...contestFilter(db.questions).map(item => ({
+            ...item,
+            type: "Questões",
+            title: subjectName(item.subjectId),
+            detail: `${item.correct}/${item.total} acertos · ${item.source || "Sem fonte"}`
+        })),
+
+        ...contestFilter(db.reviews).map(item => ({
+            ...item,
+            type: "Revisão",
+            title: item.topic,
+            detail: item.done ? "Concluída" : "Agendada"
+        }))
+    ].sort((a, b) => b.date.localeCompare(a.date));
+
+    document.getElementById("historyCount").textContent =
+        `${records.length} registros`;
+
+    document.getElementById("historyList").innerHTML =
+        records.map(item => `
+            <div class="item">
+                <div class="between">
+                    <h4>${escapeHtml(item.title)}</h4>
+                    <span class="tag">${escapeHtml(item.type)}</span>
+                </div>
+
+                <p>
+                    ${dateBR(item.date)}
+                    · ${escapeHtml(item.detail)}
+                </p>
+            </div>
+        `).join("") ||
+        '<div class="empty">Seu histórico aparecerá aqui.</div>';
+}
+
+/* =========================================================
+   PAINEL PRINCIPAL
+   ========================================================= */
+
+function renderDashboard() {
+    const studies = contestFilter(db.studies);
+    const questions = contestFilter(db.questions);
+    const allSubjects = subjects();
+
+    const minutes = sum(studies, "minutes");
+    const totalQuestions = sum(questions, "total");
+    const correct = sum(questions, "correct");
+
+    const topics = allSubjects.flatMap(subject =>
+        Array.isArray(subject.topics) ? subject.topics : []
+    );
+
+    const completedTopics = topics.filter(topic => topic.done).length;
+
+    const examDate = activeContest()?.examDate || "";
+    let days = null;
+
+    if (examDate) {
+        const exam = localDateObject(examDate);
+        const current = localDateObject(today());
+
+        days = Math.ceil((exam - current) / 86400000);
+    }
+
+    document.getElementById("mTime").textContent = fmtMinutes(minutes);
+
+    document.getElementById("mAccuracy").textContent =
+        `${totalQuestions ? Math.round(correct / totalQuestions * 100) : 0}%`;
+
+    document.getElementById("mAnswers").textContent =
+        `${totalQuestions} questões respondidas`;
+
+    document.getElementById("mSyllabus").textContent =
+        `${topics.length ? Math.round(completedTopics / topics.length * 100) : 0}%`;
+
+    document.getElementById("mTopics").textContent =
+        `${completedTopics} de ${topics.length} tópicos concluídos`;
+
+    document.getElementById("mDays").textContent =
+        days === null ? "—" : days < 0 ? "Passou" : `${days}d`;
+
+    document.getElementById("mExamDate").textContent =
+        examDate ? dateBR(examDate) : "Cadastre a data da prova";
+
+    const todayMinutes = sum(
+        studies.filter(item => item.date === today()),
+        "minutes"
+    );
+
+    const dailyGoal = Math.max(1, Number(db.settings.dailyGoal) || 180);
+
+    const dailyPercentage = Math.min(
+        100,
+        Math.round(todayMinutes / dailyGoal * 100)
+    );
+
+    document.getElementById("dailyPercent").textContent =
+        `${dailyPercentage}%`;
+
+    document.getElementById("dailyRing").style.setProperty(
+        "--p",
+        `${dailyPercentage}%`
+    );
+
+    document.getElementById("dailyTime").textContent =
+        fmtMinutes(todayMinutes);
+
+    document.getElementById("dailyCaption").textContent =
+        `Meta: ${fmtMinutes(dailyGoal)} · ${Math.max(0, dailyGoal - todayMinutes)} minutos restantes`;
+
+    document.getElementById("dailyBar").style.width =
+        `${dailyPercentage}%`;
+
+    const weeklyMinutes = sum(
+        studies.filter(item => inWeek(item.date)),
+        "minutes"
+    );
+
+    const weeklyQuestions = questions.filter(item => inWeek(item.date));
+    const weeklyQuestionCount = sum(weeklyQuestions, "total");
+
+    const weeklyGoal = Math.max(1, Number(db.settings.weeklyGoal) || 18);
+    const weeklyQuestionGoal = Math.max(
+        1,
+        Number(db.settings.weeklyQuestionGoal) || 300
+    );
+
+    document.getElementById("weekHours").textContent =
+        `${fmtMinutes(weeklyMinutes)} / ${weeklyGoal}h`;
+
+    document.getElementById("weekHoursBar").style.width =
+        `${Math.min(100, weeklyMinutes / (weeklyGoal * 60) * 100)}%`;
+
+    document.getElementById("weekQuestions").textContent =
+        `${weeklyQuestionCount} / ${weeklyQuestionGoal}`;
+
+    document.getElementById("weekQuestionsBar").style.width =
+        `${Math.min(100, weeklyQuestionCount / weeklyQuestionGoal * 100)}%`;
+
+    const tbody = document.getElementById("subjectStats");
+
+    tbody.innerHTML = allSubjects.map(subject => {
+        const subjectMinutes = sum(
+            studies.filter(item => item.subjectId === subject.id),
+            "minutes"
+        );
+
+        const subjectQuestions = questions.filter(
+            item => item.subjectId === subject.id
+        );
+
+        const subjectTotal = sum(subjectQuestions, "total");
+        const subjectCorrect = sum(subjectQuestions, "correct");
+        const percentage = subjectTotal
+            ? Math.round(subjectCorrect / subjectTotal * 100)
+            : 0;
+
+        return `
+            <tr>
+                <td>
+                    <span style="color:${escapeHtml(subject.color || "#3478c8")}">●</span>
+                    ${escapeHtml(subject.name)}
+                </td>
+                <td>${fmtMinutes(subjectMinutes)}</td>
+                <td class="green">${subjectCorrect}</td>
+                <td class="red">${subjectTotal - subjectCorrect}</td>
+                <td>${percentage}%</td>
+            </tr>
+        `;
+    }).join("");
+
+    document.getElementById("subjectEmpty").style.display =
+        allSubjects.length ? "none" : "block";
+
+    const nextReviews = contestFilter(db.reviews)
+        .filter(review => !review.done)
+        .sort((a, b) => a.date.localeCompare(b.date))
+        .slice(0, 3);
+
+    document.getElementById("nextReviews").innerHTML =
+        nextReviews.map(review => `
+            <div class="between small">
+                <span>${escapeHtml(review.topic)}</span>
+                <strong>${dateBR(review.date)}</strong>
+            </div>
+        `).join("") ||
+        '<div class="small muted">Nenhuma revisão pendente.</div>';
+
+    if (document.getElementById("page-dashboard").classList.contains("active")) {
+        requestAnimationFrame(() => renderWeekChart(studies));
+    }
+}
+
+/* =========================================================
+   GRÁFICO SEMANAL
+   ========================================================= */
+
+function renderWeekChart(studies) {
+    const canvas = document.getElementById("weekChart");
+
+    if (!canvas || !window.Chart) return;
+
+    const labels = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
+    const values = Array(7).fill(0);
+
+    studies.filter(item => inWeek(item.date)).forEach(item => {
+        const date = localDateObject(item.date);
+
+        if (!date) return;
+
+        const day = date.getDay();
+        const index = day === 0 ? 6 : day - 1;
+
+        values[index] += (Number(item.minutes) || 0) / 60;
+    });
+
+    if (charts.week) charts.week.destroy();
+
+    charts.week = new Chart(canvas, {
+        type: "bar",
+
+        data: {
+            labels,
+            datasets: [{
+                label: "Horas estudadas",
+                data: values,
+                backgroundColor: "#3478c8",
+                borderRadius: 5
+            }]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            plugins: {
+                legend: {
+                    labels: {
+                        color: "#93a4bb",
+                        font: { size: 10 }
+                    }
+                }
+            },
+
+            scales: {
+                x: {
+                    ticks: { color: "#93a4bb" },
+                    grid: { display: false }
+                },
+
+                y: {
+                    beginAtZero: true,
+                    ticks: { color: "#93a4bb" },
+                    grid: { color: "#24344b" }
+                }
+            }
+        }
+    });
+}
+
+/* =========================================================
+   ESTATÍSTICAS E GRÁFICOS
+   ========================================================= */
+
+function chartOptions() {
+    return {
+        responsive: true,
+        maintainAspectRatio: false,
+
+        plugins: {
+            legend: {
+                labels: { color: "#93a4bb" }
+            }
+        },
+
+        scales: {
+            x: {
+                ticks: { color: "#93a4bb" },
+                grid: { display: false }
+            },
+
+            y: {
+                beginAtZero: true,
+                ticks: { color: "#93a4bb" },
+                grid: { color: "#24344b" }
+            }
+        }
+    };
+}
+
+function renderStats() {
+    const studies = contestFilter(db.studies);
+    const questions = contestFilter(db.questions);
+
+    const total = sum(questions, "total");
+    const correct = sum(questions, "correct");
+
+    document.getElementById("statsMetrics").innerHTML = [
+        ["Tempo total", fmtMinutes(sum(studies, "minutes"))],
+        ["Questões", total],
+        ["Acertos", correct],
+        ["Aproveitamento", `${total ? Math.round(correct / total * 100) : 0}%`]
+    ].map(item => `
+        <div class="card">
+            <div class="metric-label">${item[0]}</div>
+            <div class="metric">${item[1]}</div>
+        </div>
+    `).join("");
+
+    if (!document.getElementById("page-estatisticas").classList.contains("active")) {
+        return;
+    }
+
+    if (!window.Chart) return;
+
+    requestAnimationFrame(() => {
+        const subjectsList = subjects();
+
+        const bySubject = subjectsList.map(subject => {
+            const records = questions.filter(
+                question => question.subjectId === subject.id
+            );
+
+            const subjectTotal = sum(records, "total");
+            const subjectCorrect = sum(records, "correct");
+
+            return {
+                name: subject.name,
+                correct: subjectCorrect,
+                wrong: subjectTotal - subjectCorrect
+            };
+        });
+
+        ["subjectChart", "accuracyChart"].forEach(id => {
+            if (charts[id]) {
+                charts[id].destroy();
+                charts[id] = null;
+            }
+        });
+
+        const subjectCanvas = document.getElementById("subjectChart");
+        const accuracyCanvas = document.getElementById("accuracyChart");
+
+        charts.subject = new Chart(subjectCanvas, {
+            type: "bar",
+
+            data: {
+                labels: bySubject.map(item => item.name),
+
+                datasets: [
+                    {
+                        label: "Acertos",
+                        data: bySubject.map(item => item.correct),
+                        backgroundColor: "#3478c8"
+                    },
+                    {
+                        label: "Erros",
+                        data: bySubject.map(item => item.wrong),
+                        backgroundColor: "#ef4444"
+                    }
+                ]
+            },
+
+            options: chartOptions()
+        });
+
+        charts.accuracy = new Chart(accuracyCanvas, {
+            type: "doughnut",
+
+            data: {
+                labels: ["Acertos", "Erros"],
+
+                datasets: [{
+                    data: [correct, Math.max(0, total - correct)],
+                    backgroundColor: ["#3478c8", "#ef4444"],
+                    borderColor: "#111c2d"
+                }]
+            },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+
+                plugins: {
+                    legend: {
+                        position: "bottom",
+                        labels: { color: "#93a4bb" }
+                    }
+                }
+            }
+        });
+    });
+}
+
+/* =========================================================
+   CONFIGURAÇÕES E METAS
+   ========================================================= */
+
+document.getElementById("settingsForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    const dailyGoal = Number(document.getElementById("dailyGoal").value);
+    const weeklyGoal = Number(document.getElementById("weeklyGoal").value);
+    const weeklyQuestionGoal = Number(
+        document.getElementById("weeklyQuestionGoal").value
+    );
+
+    if (
+        !Number.isFinite(dailyGoal) || dailyGoal < 1 ||
+        !Number.isFinite(weeklyGoal) || weeklyGoal < 1 ||
+        !Number.isFinite(weeklyQuestionGoal) || weeklyQuestionGoal < 1
+    ) {
+        alert("Informe metas válidas, maiores que zero.");
+        return;
+    }
+
+    db.settings = {
+        dailyGoal,
+        weeklyGoal,
+        weeklyQuestionGoal
+    };
+
+    save("Seu tempo de estudo foi registrado!");
+
+    alert("Metas atualizadas com sucesso!");
+});
+
+/* =========================================================
+   CRONÔMETRO
+   ========================================================= */
+
+function startTimer() {
+    if (timerRunning) return;
+
+    if (!db.activeContest) {
+        alert("Cadastre ou selecione um concurso primeiro.");
+        nav("concursos");
+        return;
+    }
+
+    if (!subjects().length) {
+        alert("Cadastre uma disciplina primeiro.");
+        nav("disciplinas");
+        return;
+    }
+
+    const subjectSelect = document.getElementById("timerSubject");
+
+    if (!subjectSelect.value) {
+        alert("Selecione uma disciplina para a sessão.");
+        return;
+    }
+
+    timerRunning = true;
+    timerStartedAt = Date.now() - timerSeconds * 1000;
+
+    document.getElementById("timerStart").textContent = "Em andamento";
+
+    clearInterval(timerInterval);
+    timerInterval = setInterval(updateTimer, 1000);
+
+    updateTimer();
+}
+
+function pauseTimer() {
+    if (!timerRunning) return;
+
+    timerRunning = false;
+
+    clearInterval(timerInterval);
+    timerInterval = null;
+
+    timerSeconds = Math.floor((Date.now() - timerStartedAt) / 1000);
+
+    document.getElementById("timerStart").textContent = "Continuar";
+
+    updateTimer();
+}
+
+function updateTimer() {
+    if (timerRunning) {
+        timerSeconds = Math.floor((Date.now() - timerStartedAt) / 1000);
+    }
+
+    const hours = Math.floor(timerSeconds / 3600);
+    const minutes = Math.floor((timerSeconds % 3600) / 60);
+    const seconds = timerSeconds % 60;
+
+    document.getElementById("timerDisplay").textContent =
+        [hours, minutes, seconds]
+            .map(value => String(value).padStart(2, "0"))
+            .join(":");
+}
+
+function finishTimer() {
+    if (timerRunning) pauseTimer();
+
+    if (timerSeconds < 1) {
+        alert("Inicie o cronômetro antes de finalizar.");
+        return;
+    }
+
+    const subjectId = document.getElementById("timerSubject").value;
+
+    if (!subjects().some(subject => subject.id === subjectId)) {
+        alert("Selecione uma disciplina válida.");
+        return;
+    }
+
+    const minutes = Math.max(1, Math.round(timerSeconds / 60));
+
+    db.studies.push({
+        id: uid(),
+        contestId: db.activeContest,
+        subjectId,
+        date: today(),
+        minutes,
+        topic: "Sessão pelo cronômetro",
+        notes: ""
+    });
+
+    timerSeconds = 0;
+    timerRunning = false;
+
+    clearInterval(timerInterval);
+    timerInterval = null;
+
+    updateTimer();
+
+    document.getElementById("timerStart").textContent = "Iniciar";
+
+    save("Seu tempo de estudo foi registrado!");
+
+    alert(`Sessão salva: ${fmtMinutes(minutes)}`);
+}
+
+/* =========================================================
+   BACKUP — SARAH OLIVEIRA
+   ========================================================= */
+
+function exportBackup() {
+    try {
+        const backup = {
+            ...db,
+            backupOwner: "Sarah Oliveira",
+            backupDate: new Date().toISOString(),
+            application: "Sarah Oliveira — Sistema de Estudos"
+        };
+
+        const blob = new Blob(
+            [JSON.stringify(backup, null, 2)],
+            { type: "application/json" }
+        );
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.download = `sarah-oliveira-backup-${today()}.json`;
+
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (error) {
+        console.error("Erro ao exportar backup:", error);
+        alert("Não foi possível exportar o backup.");
+    }
+}
+
+function importBackup(event) {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+        try {
+            const data = JSON.parse(reader.result);
+
+            const requiredArrays = [
+                "contests",
+                "subjects",
+                "studies",
+                "questions",
+                "reviews",
+                "tasks"
+            ];
+
+            const valid = requiredArrays.every(key =>
+                Array.isArray(data[key])
+            );
+
+            if (!valid) {
+                throw new Error("Estrutura de backup inválida.");
+            }
+
+            if (!confirm("Importar backup e substituir os dados atuais?")) {
+                return;
+            }
+
+            db = {
+                ...blank(),
+                ...data,
+                settings: {
+                    ...blank().settings,
+                    ...(data.settings || {})
+                }
+            };
+
+            save("Seu tempo de estudo foi registrado!");
+
+            alert("Backup importado com sucesso!");
+        } catch (error) {
+            console.error("Erro ao importar backup:", error);
+            alert("Arquivo de backup inválido ou incompatível.");
+        } finally {
+            event.target.value = "";
+        }
+    };
+
+    reader.onerror = () => {
+        alert("Não foi possível ler o arquivo selecionado.");
+        event.target.value = "";
+    };
+
+    reader.readAsText(file);
+}
+
+function clearData() {
+    if (!confirm(
+        "ATENÇÃO: apagar todos os concursos, estudos, questões, revisões e tarefas?"
+    )) return;
+
+    if (!confirm(
+        "Confirma definitivamente? Essa ação não pode ser desfeita. Faça backup antes."
+    )) return;
+
+    db = blank();
+
+    clearInterval(timerInterval);
+    timerInterval = null;
+    timerSeconds = 0;
+    timerRunning = false;
+
+    localStorage.removeItem(KEY);
+
+    save("Seu tempo de estudo foi registrado!");
+
+    updateTimer();
+
+    alert("Dados apagados. Seu sistema está pronto para começar novamente.");
+}
+
+/* =========================================================
+   ATUALIZAÇÃO GERAL
+   ========================================================= */
+
+function renderAll() {
+    renderContest();
+    fillSelects();
+
+    renderSubjects();
+    renderTasks();
+    renderReviews();
+    renderQuestions();
+    renderHistory();
+    renderDashboard();
+    renderStats();
+
+    const dailyGoal = document.getElementById("dailyGoal");
+    const weeklyGoal = document.getElementById("weeklyGoal");
+    const weeklyQuestionGoal = document.getElementById("weeklyQuestionGoal");
+
+    if (dailyGoal) dailyGoal.value = db.settings.dailyGoal;
+    if (weeklyGoal) weeklyGoal.value = db.settings.weeklyGoal;
+
+    if (weeklyQuestionGoal) {
+        weeklyQuestionGoal.value = db.settings.weeklyQuestionGoal;
+    }
+}
+
+/* =========================================================
+   INICIALIZAÇÃO
+   ========================================================= */
+
+renderAll();
+updateTimer();
+
+</script>
+</body>
+</html>
