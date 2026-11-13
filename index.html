@@ -4,10 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#080d17">
-<title>Meu Estudo | Concursos</title>
+<title>S7 Estudos | Concursos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 
 :root {
@@ -1064,13 +1065,67 @@ textarea::placeholder {
     }
 }
 
+
+/* =========================================
+   AUTENTICAÇÃO E SINCRONIZAÇÃO SUPABASE
+========================================= */
+.auth-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background: radial-gradient(circle at top, #102746 0%, #03060c 55%);
+}
+.auth-screen[hidden] { display: none !important; }
+.auth-card {
+    width: min(430px, 100%);
+    padding: 30px;
+    background: linear-gradient(145deg, #101f33, #080f1c);
+    border: 1px solid #294464;
+    border-radius: 18px;
+    box-shadow: 0 25px 80px rgba(0,0,0,.5);
+}
+.auth-brand { font-size: 25px; font-weight: 800; letter-spacing: -1px; margin-bottom: 7px; }
+.auth-brand span { color: #65aaff; }
+.auth-card h1 { font-size: 19px; margin: 22px 0 8px; }
+.auth-card p { color: #91a5bf; font-size: 12px; line-height: 1.7; margin-bottom: 20px; }
+.auth-card .form-group { margin-bottom: 13px; }
+.auth-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 18px; }
+.auth-message { min-height: 18px; margin-top: 14px; color: #9fcaff; font-size: 11px; line-height: 1.6; }
+.cloud-status { color: #82a0c2; font-size: 10px; white-space: nowrap; }
+.account-email { color: #9bb4d2; font-size: 10px; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width:700px) {
+    .auth-card { padding: 23px; }
+    .cloud-status, .account-email { width: 100%; max-width: none; }
+}
+
 </style>
 </head>
 <body>
 
 <div class="toast-container" id="toastContainer" aria-live="polite"></div>
 
-<div class="layout">
+
+<div class="auth-screen" id="authScreen">
+  <div class="auth-card">
+    <div class="auth-brand">S7<span>ESTUDOS</span></div>
+    <h1>Acesse sua conta</h1>
+    <p>Entre para acessar seus estudos e sincronizar automaticamente seus dados com a nuvem.</p>
+    <form id="authForm">
+      <div class="form-group"><label for="authEmail">E-mail</label><input id="authEmail" type="email" autocomplete="email" required placeholder="seuemail@exemplo.com"></div>
+      <div class="form-group"><label for="authPassword">Senha</label><input id="authPassword" type="password" autocomplete="current-password" minlength="6" required placeholder="Mínimo de 6 caracteres"></div>
+      <div class="auth-actions">
+        <button class="btn" id="loginButton" type="submit">Entrar</button>
+        <button class="btn secondary" id="signupButton" type="button">Criar conta</button>
+      </div>
+    </form>
+    <div class="auth-message" id="authMessage" role="status"></div>
+  </div>
+</div>
+
+<div class="layout" id="appLayout" style="display:none">
 <aside class="sidebar">
   <div class="brand">S7<span>ESTUDOS</span><small>GESTÃO DE ESTUDOS</small></div>
   <div class="nav">
@@ -1093,7 +1148,7 @@ textarea::placeholder {
 <main class="main">
 <header class="top">
  <div><h1 id="pageTitle">Sarah Oliveira</h1><div class="muted small" id="pageSubtitle">Acompanhe sua preparação para concursos públicos.</div></div>
- <div class="top-actions"><select id="activeContest" class="select" aria-label="Concurso ativo"></select><button class="btn" onclick="openModal('studyModal')">+ Registrar estudo</button></div>
+ <div class="top-actions"><span class="account-email" id="accountEmail"></span><span class="cloud-status" id="cloudStatus">Conectando...</span><select id="activeContest" class="select" aria-label="Concurso ativo"></select><button class="btn" onclick="openModal('studyModal')">+ Registrar estudo</button><button class="btn ghost" type="button" onclick="logout()">Sair</button></div>
 </header>
 
 <section class="page active" id="page-dashboard">
@@ -1165,9 +1220,9 @@ textarea::placeholder {
 <section class="page" id="page-config">
  <div class="grid cols">
   <div class="card"><h3 class="section-title">Metas de estudo</h3><form id="settingsForm" class="form-grid"><div class="form-group"><label>Meta diária (minutos)</label><input type="number" id="dailyGoal" min="1" value="180" required></div><div class="form-group"><label>Meta semanal (horas)</label><input type="number" id="weeklyGoal" min="1" value="18" required></div><div class="form-group"><label>Meta semanal de questões</label><input type="number" id="weeklyQuestionGoal" min="1" value="300" required></div><div class="form-group full"><button class="btn">Salvar metas</button></div></form></div>
-  <div class="card"><h3 class="section-title">Backup dos seus dados</h3><p class="small muted" style="line-height:1.7;margin-bottom:15px">Exporte um arquivo de segurança ou importe um backup anterior. Os dados ficam salvos neste navegador e neste dispositivo.</p><div class="actions"><button class="btn" onclick="exportBackup()">Exportar backup</button><label class="btn secondary">Importar backup<input type="file" accept="application/json" onchange="importBackup(event)" hidden></label></div><button class="btn danger" style="margin-top:20px" onclick="clearData()">Apagar todos os dados</button></div>
+  <div class="card"><h3 class="section-title">Backup dos seus dados</h3><p class="small muted" style="line-height:1.7;margin-bottom:15px">Exporte um arquivo de segurança ou importe um backup anterior. Seus dados são salvos neste dispositivo e sincronizados com sua conta Supabase.</p><div class="actions"><button class="btn" onclick="exportBackup()">Exportar backup</button><label class="btn secondary">Importar backup<input type="file" accept="application/json" onchange="importBackup(event)" hidden></label></div><button class="btn danger" style="margin-top:20px" onclick="clearData()">Apagar todos os dados</button></div>
  </div>
- <div class="notice" style="margin-top:14px">Atenção: o LocalStorage não sincroniza automaticamente entre computadores ou navegadores. Faça backups frequentes. O sistema não envia seus dados para um servidor.</div>
+ <div class="notice" style="margin-top:14px">Sincronização ativa: seus registros são mantidos neste navegador e enviados automaticamente para sua conta Supabase. Recomendamos continuar exportando backups periodicamente.</div>
 </section>
 
 <footer class="footer">Desenvolvido por s7systems</footer>
@@ -1190,6 +1245,20 @@ textarea::placeholder {
 <script>
 
 "use strict";
+
+/* =========================================================
+   SUPABASE — CONFIGURAÇÃO DO PROJETO S7 ESTUDOS
+   A chave publishable/anon pode ficar no navegador.
+   Nunca coloque a chave service_role neste arquivo.
+========================================================= */
+const SUPABASE_URL = "https://sskhildiqhjbzanbwusw.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_OQLtkpAVrlpS9cQiUYwVlg_aA8z6-59";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const OWNER_KEY = "meu_estudo_owner_v1";
+let currentUser = null;
+let cloudReady = false;
+let cloudSaveTimer = null;
+let enteringUserId = null;
 
 /* =========================================================
    SARAH OLIVEIRA — SISTEMA PESSOAL DE ESTUDOS
@@ -1310,63 +1379,233 @@ function showToast(message, type = "success", title = "") {
    DADOS E ARMAZENAMENTO
    ========================================================= */
 
-function load() {
-    try {
-        const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+function normalizeData(saved = {}) {
+    const data = {
+        ...blank(),
+        ...(saved && typeof saved === "object" ? saved : {}),
+        settings: {
+            ...blank().settings,
+            ...((saved && saved.settings) || {})
+        }
+    };
 
-        const data = {
-            ...blank(),
-            ...saved,
-            settings: {
-                ...blank().settings,
-                ...(saved.settings || {})
-            }
-        };
-
-        [
-            "contests",
-            "subjects",
-            "studies",
-            "questions",
-            "reviews",
-            "tasks"
-        ].forEach(key => {
+    ["contests", "subjects", "studies", "questions", "reviews", "tasks"]
+        .forEach(key => {
             if (!Array.isArray(data[key])) data[key] = [];
         });
 
-        return data;
+    return data;
+}
+
+function load() {
+    try {
+        return normalizeData(JSON.parse(localStorage.getItem(KEY) || "{}"));
     } catch (error) {
         console.error("Erro ao carregar os dados:", error);
         return blank();
     }
 }
 
+function hasMeaningfulData(data) {
+    return ["contests", "subjects", "studies", "questions", "reviews", "tasks"]
+        .some(key => Array.isArray(data[key]) && data[key].length > 0);
+}
 
-function save(message = "Suas alterações foram salvas com sucesso!") {
-    try {
-        localStorage.setItem(KEY, JSON.stringify(db));
+function setCloudStatus(message, color = "") {
+    const el = document.getElementById("cloudStatus");
+    if (!el) return;
+    el.textContent = message;
+    el.style.color = color || "#82a0c2";
+}
 
-        renderAll();
+async function writeCloudData(showFeedback = false) {
+    if (!currentUser || !cloudReady) return false;
 
-        showToast(
-            message,
-            "success",
-            "Salvo com sucesso!"
-        );
+    setCloudStatus("Sincronizando...", "#f5b942");
+    const { error } = await supabaseClient
+        .from("user_study_data")
+        .upsert({
+            user_id: currentUser.id,
+            data: db,
+            updated_at: new Date().toISOString()
+        }, { onConflict: "user_id" });
 
-        return true;
-
-    } catch (error) {
-        console.error("Erro ao salvar:", error);
-
-        showToast(
-            "Não foi possível salvar. Verifique o armazenamento do navegador.",
-            "error",
-            "Erro ao salvar"
-        );
-
+    if (error) {
+        console.error("Erro ao sincronizar com Supabase:", error);
+        setCloudStatus("Falha na nuvem — salvo neste dispositivo", "#f5b942");
+        if (showFeedback) showToast("Os dados continuam salvos neste dispositivo, mas a sincronização falhou. Verifique sua conexão.", "warning", "Sincronização pendente");
         return false;
     }
+
+    localStorage.setItem(OWNER_KEY, currentUser.id);
+    setCloudStatus("Sincronizado na nuvem", "#4ade80");
+    if (showFeedback) showToast("Seus dados foram sincronizados com sua conta Supabase.", "success", "Nuvem atualizada");
+    return true;
+}
+
+function scheduleCloudSave() {
+    if (!currentUser || !cloudReady) return;
+    clearTimeout(cloudSaveTimer);
+    setCloudStatus("Aguardando sincronização...", "#f5b942");
+    cloudSaveTimer = setTimeout(() => writeCloudData(false), 800);
+}
+
+function save(message = "Alterações salvas neste dispositivo e serão sincronizadas.") {
+    try {
+        localStorage.setItem(KEY, JSON.stringify(db));
+        renderAll();
+        showToast(message, "success", "Salvo neste dispositivo");
+        scheduleCloudSave();
+        return true;
+    } catch (error) {
+        console.error("Erro ao salvar:", error);
+        showToast("Não foi possível salvar. Verifique o armazenamento do navegador.", "error", "Erro ao salvar");
+        return false;
+    }
+}
+
+async function enterApp(user) {
+    if (!user || enteringUserId === user.id) return;
+    if (currentUser?.id === user.id && cloudReady) return;
+
+    enteringUserId = user.id;
+    currentUser = user;
+    cloudReady = false;
+    clearTimeout(cloudSaveTimer);
+    document.getElementById("authScreen").hidden = true;
+    document.getElementById("appLayout").style.display = "block";
+    document.getElementById("accountEmail").textContent = user.email || "Conta conectada";
+    setCloudStatus("Carregando seus dados...", "#f5b942");
+
+    try {
+        const { data: remote, error } = await supabaseClient
+            .from("user_study_data")
+            .select("data")
+            .eq("user_id", user.id)
+            .maybeSingle();
+
+        if (error) throw error;
+
+        const localOwner = localStorage.getItem(OWNER_KEY);
+        const localData = load();
+
+        if (remote && remote.data) {
+            db = normalizeData(remote.data);
+            localStorage.setItem(KEY, JSON.stringify(db));
+            localStorage.setItem(OWNER_KEY, user.id);
+        } else if (!localOwner || localOwner === user.id) {
+            // Primeira entrada: migra os dados locais existentes para a nuvem.
+            db = normalizeData(localData);
+            cloudReady = true;
+            await writeCloudData(false);
+        } else {
+            // Evita enviar os dados de uma conta anterior para uma conta nova.
+            db = blank();
+            localStorage.setItem(KEY, JSON.stringify(db));
+            cloudReady = true;
+            await writeCloudData(false);
+        }
+
+        cloudReady = true;
+        localStorage.setItem(KEY, JSON.stringify(db));
+        localStorage.setItem(OWNER_KEY, user.id);
+        renderAll();
+        updateTimer();
+        setCloudStatus("Sincronizado na nuvem", "#4ade80");
+        showToast("Seus estudos estão conectados à nuvem.", "success", "S7 Estudos conectado");
+    } catch (error) {
+        console.error("Erro ao carregar dados da nuvem:", error);
+        cloudReady = false;
+        db = load();
+        renderAll();
+        setCloudStatus("Nuvem indisponível — modo local", "#f5b942");
+        showToast("Não foi possível acessar a nuvem. Seus dados locais foram mantidos; tente atualizar a página.", "warning", "Conexão limitada");
+    } finally {
+        enteringUserId = null;
+    }
+}
+
+function showAuth(message = "") {
+    currentUser = null;
+    cloudReady = false;
+    document.getElementById("appLayout").style.display = "none";
+    document.getElementById("authScreen").hidden = false;
+    document.getElementById("authMessage").textContent = message;
+}
+
+async function login() {
+    const email = document.getElementById("authEmail").value.trim();
+    const password = document.getElementById("authPassword").value;
+    const message = document.getElementById("authMessage");
+    message.textContent = "Conectando...";
+
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if (error) {
+        message.textContent = error.message;
+        return;
+    }
+    await enterApp(data.user);
+}
+
+async function signup() {
+    const email = document.getElementById("authEmail").value.trim();
+    const password = document.getElementById("authPassword").value;
+    const message = document.getElementById("authMessage");
+
+    if (password.length < 6) {
+        message.textContent = "A senha precisa ter pelo menos 6 caracteres.";
+        return;
+    }
+
+    message.textContent = "Criando sua conta...";
+    const { data, error } = await supabaseClient.auth.signUp({ email, password });
+    if (error) {
+        message.textContent = error.message;
+        return;
+    }
+
+    if (data.session && data.user) {
+        await enterApp(data.user);
+    } else {
+        message.textContent = "Conta criada! Confira seu e-mail para confirmar o cadastro e depois faça login.";
+    }
+}
+
+async function logout() {
+    if (!confirm("Deseja sair da sua conta S7 Estudos?")) return;
+    clearTimeout(cloudSaveTimer);
+    if (currentUser && cloudReady) await writeCloudData(false);
+    const { error } = await supabaseClient.auth.signOut();
+    if (error) {
+        showToast("Não foi possível sair da conta.", "error", "Erro");
+        return;
+    }
+    showAuth("Você saiu da sua conta com segurança.");
+}
+
+function initializeSupabaseAuth() {
+    document.getElementById("authForm").addEventListener("submit", event => {
+        event.preventDefault();
+        login();
+    });
+    document.getElementById("signupButton").addEventListener("click", signup);
+
+    supabaseClient.auth.onAuthStateChange((event, session) => {
+        if (event === "SIGNED_OUT") {
+            showAuth("Você saiu da sua conta.");
+        } else if (event === "SIGNED_IN" && session?.user) {
+            enterApp(session.user);
+        }
+    });
+
+    supabaseClient.auth.getSession().then(({ data, error }) => {
+        if (error) {
+            showAuth("Não foi possível verificar sua sessão. Atualize a página.");
+            return;
+        }
+        if (data.session?.user) enterApp(data.session.user);
+        else showAuth();
+    });
 }
 
 
@@ -1618,7 +1857,7 @@ function fillSelects() {
 
 document.getElementById("activeContest").addEventListener("change", event => {
     db.activeContest = event.target.value;
-    save("Seu tempo de estudo foi registrado!");
+    save("Alterações salvas neste dispositivo e serão sincronizadas com a nuvem.");
 });
 
 /* =========================================================
@@ -1653,7 +1892,7 @@ document.getElementById("contestForm").addEventListener("submit", event => {
     event.target.reset();
     closeModal("contestModal");
 
-    save("Seu tempo de estudo foi registrado!");
+    save("Alterações salvas neste dispositivo e serão sincronizadas com a nuvem.");
 });
 
 function renderContest() {
@@ -1725,7 +1964,7 @@ function selectContest(id) {
     if (!db.contests.some(contest => contest.id === id)) return;
 
     db.activeContest = id;
-    save("Seu tempo de estudo foi registrado!");
+    save("Alterações salvas neste dispositivo e serão sincronizadas com a nuvem.");
 }
 
 function deleteContest(id) {
@@ -1749,7 +1988,7 @@ function deleteContest(id) {
         db.activeContest = db.contests[0]?.id || "";
     }
 
-    save("Seu tempo de estudo foi registrado!");
+    save("Alterações salvas neste dispositivo e serão sincronizadas com a nuvem.");
 }
 
 /* =========================================================
@@ -1788,7 +2027,7 @@ document.getElementById("subjectForm").addEventListener("submit", event => {
     event.target.reset();
     closeModal("subjectModal");
 
-    save("Seu tempo de estudo foi registrado!");
+    save("Alterações salvas neste dispositivo e serão sincronizadas com a nuvem.");
 });
 
 function renderSubjects() {
@@ -1871,7 +2110,7 @@ function deleteSubject(id) {
 
     db.subjects = db.subjects.filter(subject => subject.id !== id);
 
-    save("Seu tempo de estudo foi registrado!");
+    save("Alterações salvas neste dispositivo e serão sincronizadas com a nuvem.");
 }
 
 function toggleTopic(subjectId, topicId) {
@@ -1881,7 +2120,7 @@ function toggleTopic(subjectId, topicId) {
     if (!topic) return;
 
     topic.done = !topic.done;
-    save("Seu tempo de estudo foi registrado!");
+    save("Alterações salvas neste dispositivo e serão sincronizadas com a nuvem.");
 }
 
 function deleteTopic(subjectId, topicId) {
@@ -1891,7 +2130,7 @@ function deleteTopic(subjectId, topicId) {
 
     subject.topics = subject.topics.filter(topic => topic.id !== topicId);
 
-    save("Seu tempo de estudo foi registrado!");
+    save("Alterações salvas neste dispositivo e serão sincronizadas com a nuvem.");
 }
 
 function addTopic(subjectId) {
@@ -1909,7 +2148,7 @@ function addTopic(subjectId) {
         done: false
     });
 
-    save("Seu tempo de estudo foi registrado!");
+    save("Alterações salvas neste dispositivo e serão sincronizadas com a nuvem.");
 }
 
 /* =========================================================
@@ -1946,7 +2185,7 @@ document.getElementById("studyForm").addEventListener("submit", event => {
     event.target.reset();
     closeModal("studyModal");
 
-    save("Seu tempo de estudo foi registrado!");
+    save("Alterações salvas neste dispositivo e serão sincronizadas com a nuvem.");
 });
 
 /* =========================================================
@@ -1991,7 +2230,7 @@ document.getElementById("questionForm").addEventListener("submit", event => {
     event.target.reset();
     closeModal("questionModal");
 
-    save("Seu tempo de estudo foi registrado!");
+    save("Alterações salvas neste dispositivo e serão sincronizadas com a nuvem.");
 });
 
 function renderQuestions() {
@@ -2082,7 +2321,7 @@ document.getElementById("reviewForm").addEventListener("submit", event => {
     event.target.reset();
     closeModal("reviewModal");
 
-    save("Seu tempo de estudo foi registrado!");
+    save("Alterações salvas neste dispositivo e serão sincronizadas com a nuvem.");
 });
 
 function renderReviews() {
@@ -2134,7 +2373,7 @@ function toggleReview(id) {
     if (!review) return;
 
     review.done = !review.done;
-    save("Seu tempo de estudo foi registrado!");
+    save("Alterações salvas neste dispositivo e serão sincronizadas com a nuvem.");
 }
 
 /* =========================================================
@@ -2165,7 +2404,7 @@ document.getElementById("taskForm").addEventListener("submit", event => {
     event.target.reset();
     closeModal("taskModal");
 
-    save("Seu tempo de estudo foi registrado!");
+    save("Alterações salvas neste dispositivo e serão sincronizadas com a nuvem.");
 });
 
 function renderTasks() {
@@ -2218,7 +2457,7 @@ function toggleTask(id) {
     if (!task) return;
 
     task.done = !task.done;
-    save("Seu tempo de estudo foi registrado!");
+    save("Alterações salvas neste dispositivo e serão sincronizadas com a nuvem.");
 }
 
 /* =========================================================
@@ -2234,7 +2473,7 @@ function deleteItem(type, id) {
 
     db[type] = db[type].filter(item => item.id !== id);
 
-    save("Seu tempo de estudo foi registrado!");
+    save("Alterações salvas neste dispositivo e serão sincronizadas com a nuvem.");
 }
 
 /* =========================================================
@@ -2672,7 +2911,7 @@ document.getElementById("settingsForm").addEventListener("submit", event => {
         weeklyQuestionGoal
     };
 
-    save("Seu tempo de estudo foi registrado!");
+    save("Alterações salvas neste dispositivo e serão sincronizadas com a nuvem.");
 
     alert("Metas atualizadas com sucesso!");
 });
@@ -2781,7 +3020,7 @@ function finishTimer() {
 
     document.getElementById("timerStart").textContent = "Iniciar";
 
-    save("Seu tempo de estudo foi registrado!");
+    save("Alterações salvas neste dispositivo e serão sincronizadas com a nuvem.");
 
     alert(`Sessão salva: ${fmtMinutes(minutes)}`);
 }
@@ -2862,7 +3101,7 @@ function importBackup(event) {
                 }
             };
 
-            save("Seu tempo de estudo foi registrado!");
+            save("Alterações salvas neste dispositivo e serão sincronizadas com a nuvem.");
 
             alert("Backup importado com sucesso!");
         } catch (error) {
@@ -2897,9 +3136,7 @@ function clearData() {
     timerSeconds = 0;
     timerRunning = false;
 
-    localStorage.removeItem(KEY);
-
-    save("Seu tempo de estudo foi registrado!");
+    save("Todos os dados foram apagados neste dispositivo; a nuvem será atualizada.");
 
     updateTimer();
 
@@ -2938,8 +3175,7 @@ function renderAll() {
    INICIALIZAÇÃO
    ========================================================= */
 
-renderAll();
-updateTimer();
+initializeSupabaseAuth();
 
 </script>
 </body>
